@@ -47,33 +47,33 @@ const makeCSV = function(FILENAME_JSON){
 
                 const resultArrOfJson = JSON.parse(jsonFile);
 
-                const minMaxShore = resultArrOfJson[22].__EMPTY_1.replace(",","").split(' / ');
-                const minMaxJeJu = resultArrOfJson[22].__EMPTY_7.replace(",","").split(' / ');
+                const minMaxShore = resultArrOfJson[22].__EMPTY_1.replace(/,/g,"").split(' / ');
+                const minMaxJeJu = resultArrOfJson[22].__EMPTY_7.replace(/,/g,"").split(' / ');
 
 
-                const minMaxAvg = resultArrOfJson[23].__EMPTY_1.replace(",","").split(' / ');
-                const price = resultArrOfJson[24].__EMPTY_1.replace(",","");
+                const minMaxAvg = resultArrOfJson[23].__EMPTY_1.replace(/,/g,"").split(' / ');
+                const price = resultArrOfJson[24].__EMPTY_1.replace(/,/g,"");
                 const diff = resultArrOfJson[25].__EMPTY_1;
 
                 const parsedArrOfJson =[
                     {
                         date: thisDate,
-                        trd_amount: resultArrOfJson[10].__EMPTY_8.replace(",",""),
+                        trd_amount: resultArrOfJson[10].__EMPTY_8.replace(/,/g,""),
                         min: minMaxShore[0],
                         max: minMaxShore[1],
                         min_avg: minMaxAvg[0],
-                        max_avg: minMaxAvg[0],
+                        max_avg: minMaxAvg[1],
                         price : price,
                         diff : diff,
                         area_type:"1" //육지
                     },
                     {
                         date: thisDate,
-                        trd_amount:  resultArrOfJson[11].__EMPTY_8.replace(",",""),
+                        trd_amount:  resultArrOfJson[11].__EMPTY_8.replace(/,/g,""),
                         min: minMaxJeJu[0],
                         max: minMaxJeJu[1],
                         min_avg: minMaxAvg[0],
-                        max_avg: minMaxAvg[0],
+                        max_avg: minMaxAvg[1],
                         price : price,
                         diff : diff,
                         area_type:"9" //제주
