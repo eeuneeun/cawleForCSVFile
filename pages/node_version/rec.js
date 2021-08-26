@@ -5,7 +5,9 @@
   const fs = require('fs');
   const axios = require('axios').default;
 
-  // // CUSTOM FUNCTION
+  //# CUSTOM FUNCTION 
+  //@ - 1. makeJSON
+  //@ - 2. makeCSV
   const convert = require('./convert');
 
   //# URL
@@ -81,8 +83,8 @@
 
 
   
-  // //# 0 데이터 날짜
-  const FILENAME = await goCrawlering(URL_DOMAIN+URL_BRD_LIST, getFileName);
+  //# 0 데이터 날짜
+  const FILENAME_DATE = await goCrawlering(URL_DOMAIN+URL_BRD_LIST, getFileName);
 
   //# 1 글의 경로 
   const URL_CONTENTS = await goCrawlering(URL_DOMAIN+URL_BRD_LIST, geContentstUrl);
@@ -91,10 +93,13 @@
   const URL_FILE = await goCrawlering(URL_DOMAIN+URL_CONTENTS, getExcelFileUrl);
 
   //# 3 : 엑셀 파일 다운로드
-  getExcelFile(URL_DOMAIN+URL_FILE, FILENAME);
+  const FILENAME_XLS = await getExcelFile(URL_DOMAIN+URL_FILE, FILENAME_DATE);
 
   //# 4 : JSON 파일 변환
-  convert.makeJSON(FILENAME);
+  const FILENAME_JSON = await convert.makeJSON(FILENAME_XLS);
+
+  //# 5 : CSV 파일 변환
+  const FILENAME_CSV = await convert.makeCSV(FILENAME_JSON);
 
 })();
 

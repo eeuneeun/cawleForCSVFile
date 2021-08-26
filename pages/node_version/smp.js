@@ -12,9 +12,7 @@
 	
 //# 결과 JSON 배열 
 
-    const resultArrOfJson = await goCrawlering(URL);
-
-//console.log(resultArrOfJson);
+  const resultArrOfJson = await goCrawlering(URL);
 
 	const resultCSV = jsonToCSV (resultArrOfJson, {
       delimiter: "|",

@@ -1,8 +1,7 @@
-import Head from 'next/head'
 import { jsonToCSV  } from 'react-papaparse';
 
 
-export default function CustomCrawler(props) {
+export default function Smp(props) {
 
   const jsonArr = props.data;
 
@@ -45,44 +44,22 @@ export default function CustomCrawler(props) {
   }
 
   return (
-    <div className="container">
-      <Head>
-        <title>SMP 크롤러 - To CSV Files</title>
-      </Head>
-
-      <main>
-        <h1 className="title">
+    <dl className="container">
+    
+        <dt className="title">
           SMP 크롤러 - To CSV Files
-        </h1>
+        </dt>
 
-        <p className="description">
+        <dd className="description">
           <button onClick={parseToCSV}>오늘의 시간대별 SMP 가격 받기</button>
-        </p>
-      </main>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        button{padding: 10px 20px; font-size:15px; background: #0CBA7F; border:0; border-radius:5px; color:#fff}
+        </dd>
+      
+        <style jsx>{`
+        
+          button{padding: 10px 20px; font-size:15px; background: #0CBA7F; border:0; border-radius:5px; color:#fff}
        
-      `}</style>
-    </div>
+        `}</style>
+    </dl>
   )
 }
 
