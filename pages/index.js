@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import Rec from './rec';
-import Smp from './smp';
+import Link from 'next/link'
 
 export default function index(props) {
 
@@ -12,8 +11,16 @@ export default function index(props) {
 
       <main>
         <ul>
-          <li><Smp /></li>
-          <li><Rec /></li>
+          <li>
+            <Link href="/smp">
+              <a>SMP</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/rec">
+              <a>REC</a>
+            </Link>
+          </li>
         </ul>
       </main>
 
@@ -36,8 +43,12 @@ export default function index(props) {
           align-items: center;
         }
 
-        button{padding: 10px 20px; font-size:15px; background: #0CBA7F; border:0; border-radius:5px; color:#fff}
+        li {padding: 10px 20px; font-size:15px; border: 1px solid #0CBA7F; background:#fff; border-radius:5px; color:#fff; margin:10px 0}
        
+        li a{
+          color:#0CBA7F;
+        }
+
       `}</style>
     </div>
   )

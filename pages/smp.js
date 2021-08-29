@@ -7,11 +7,20 @@ export default function Smp(props) {
 
   //# CSV 파일로 파싱
   function parseToCSV(){
-    const resultCSV = jsonToCSV (jsonArr, {
-      delimiter: "|",
-      header: true
-    });
-    downLoadCSV(resultCSV)
+    if(jsonArr){ 
+      
+      const resultCSV = jsonToCSV (jsonArr, {
+        delimiter: "|",
+        header: true
+      });
+      downLoadCSV(resultCSV)
+
+    }else{
+
+      console.log(props.data)
+
+    }
+    
   }
     
   //# 오늘 날짜 구하기
@@ -55,8 +64,16 @@ export default function Smp(props) {
         </dd>
       
         <style jsx>{`
-        
-          button{padding: 10px 20px; font-size:15px; background: #0CBA7F; border:0; border-radius:5px; color:#fff}
+         .container {
+            min-height: 100vh;
+            padding: 0 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+
+          button{padding: 10px 20px; font-size:15px; background: #0CBA7F; border:0; border-radius:5px; color:#fff; margin-top:20px}
        
         `}</style>
     </dl>
@@ -66,68 +83,71 @@ export default function Smp(props) {
 
 export async function getServerSideProps() {
 
-    //# 크롤러 객체
-    const Crawler = require("crawler");
+  //# CUSTOM FUNCTION
+    //@ - 1. goCrawlering
+    //@ - 2. makeJSON
+    //@ - 3. makeCSV
+    const convert = require('./node_version/convert');
 
     //# URL
     const URL = 'https://onerec.kmos.kr/portal/rec/selectRecSMPList.do?key=1965';
 
-    //# 결과 JSON 배열 
-    const resultArrOfJson = await goCrawlering(URL);
 
-    function goCrawlering(urlsite){
-      return new Promise((resolve,reject)=>{
-        //# 크롤링 규칙 할당
-        var c = new Crawler({
-          maxConnections : 10,
-          callback : function (error, res, done) {
+    //# 오늘 날짜 
+    //@ type : string
+    function getDate($){
+      const dateTmp = $("#div1_t table thead tr th:last-child").last().text();
+      const date = "2021-"+dateTmp.substr(0,2)+"-"+dateTmp.substr(3,2);
 
-              if(error){
-                console.log(error);
-                reject(error)
-              }else{
-                var $ = res.$;
-                
-                //# 오늘 날짜 
-                //@ type : string
-                const todayTmp = $("#div1_t table thead tr th:last-child").last().text();
-                const today = "2021-"+todayTmp.substr(0,2)+"-"+todayTmp.substr(3,2);
+      return date;
+    }
 
-                //# SMP 지역 타입 
-                //@ type : string
-                //@ 육지 : 0 , 제주 : 1, 통합 : total
-                const areaType =$("select#area_type").val()
+    //# SMP 지역 타입 
+    //@ type : string
+    //@ 육지 : 0 , 제주 : 1, 통합 : total
+    function getSmpType($){
+      const areaType =$("select#area_type").val()
 
-                //# 시간별 SMP 가격
-                //@ type : []
-                const smpArr = $("#div1_t table tbody:last-child tr td:last-child");
+      return areaType;
+    }
 
-                //# 가공한 Json 객체들을 담을 빈 배열 
-                //@ type : []
-                let tmpJsonArr = []
-                          
+    //# 시간별 SMP 가격
+    //@ type : []
+    function getJsonArr($){
+      
+      let smpArr = [];
+      let smpTmpArr= $("#div1_t table tbody:last-child tr td:last-child").get();
 
-                smpArr.each(function(idx){
-                  tmpJsonArr.push(
-                    {
-                      "date" : today,
-                      "hour" : idx,
-                      "area_type" : areaType,
-                      "value" : $(this).text()
-                    }
-                  )
-                });
-                
-                resolve(tmpJsonArr);
-              }
-
-              done()
-
-            }
-          });
-        c.queue(urlsite);
-      });
+      for ( var i = 0; i < smpTmpArr.length; i++) { 
+        smpArr.push( smpTmpArr[i].children[0].data );
+      }
+     
+      return smpArr;
     }
   
+    //# 결과 JSON 배열 
+    const date = await convert.goCrawlering(URL, getDate);
+      
+    //# 결과 JSON 배열 
+    const smpType = await convert.goCrawlering(URL, getSmpType);
+
+    //# 결과 JSON 배열 
+    const smpArr = await convert.goCrawlering(URL, getJsonArr);
+    
+    //# 가공한 Json 객체들을 담을 빈 배열 
+    //@ type : []
+    let resultArrOfJson = []
+
+    smpArr.map((item, idx)=>{
+      resultArrOfJson.push(
+        {
+          "date" : date,
+          "hour" : idx,
+          "area_type" : smpType,
+          "value" : item
+        }
+      )
+    });
+
     return { props: { data: resultArrOfJson } }
 }

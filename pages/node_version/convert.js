@@ -1,7 +1,43 @@
 
+const Crawler = require("crawler");
 const xlsx = require('xlsx');
 const fs = require('fs');
 const {jsonToCSV} = require("react-papaparse");
+
+
+
+
+const goCrawlering = function (urlsite, func){
+      
+    return new Promise((resolve,reject)=>{
+      //# 크롤링 규칙 할당
+      var c = new Crawler({
+        maxConnections : 10,
+        callback : function (error, res, done) {
+
+            if(error){
+              console.log(error);
+              reject(error)
+
+            }else{
+              var $ = res.$;
+              let result = null;
+            
+              if(func){
+                result = func($);
+                console.log(result)
+              }
+              resolve(result);
+            }
+
+            done()
+
+          }
+        });
+      c.queue(urlsite);
+    });
+  }
+
 
 //# FILENAME_XLS : 내용을 읽어들일 엑셀 파일 이름
 //@ type : string
@@ -102,6 +138,7 @@ const makeCSV = function(FILENAME_JSON){
 }
 
 module.exports = {
+    goCrawlering,
     makeJSON,
     makeCSV
 };

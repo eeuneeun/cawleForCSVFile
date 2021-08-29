@@ -1,50 +1,19 @@
 (async()=>{
 
   //# LIBRARY
-  const Crawler = require("crawler");
   const fs = require('fs');
   const axios = require('axios').default;
 
-  //# CUSTOM FUNCTION 
-  //@ - 1. makeJSON
-  //@ - 2. makeCSV
+  //# CUSTOM FUNCTION
+  //@ - 1. goCrawlering
+  //@ - 2. makeJSON
+  //@ - 3. makeCSV
   const convert = require('./convert');
 
   //# URL
   const URL_DOMAIN = 'https://onerec.kmos.kr/portal/';
   const URL_BRD_LIST='selectBbsNttList.do?bbsNo=477&key=1970';
 
-
-
-  function goCrawlering(urlsite, func){
-      
-    return new Promise((resolve,reject)=>{
-      //# 크롤링 규칙 할당
-      var c = new Crawler({
-        maxConnections : 10,
-        callback : function (error, res, done) {
-
-            if(error){
-              console.log(error);
-              reject(error)
-            }else{
-              var $ = res.$;
-              let result = null;
-            
-              if(func){
-                result = func($);
-              }
-                    
-              resolve(result);
-            }
-
-            done()
-
-          }
-        });
-      c.queue(urlsite);
-    });
-  }
 
   function getFileName($){
     const dateStr =$(".bbsTable.mt10 table tbody tr:first-child td:nth-child(4)").text();
@@ -81,16 +50,15 @@
   }
 
 
-
   
   //# 0 데이터 날짜
-  const FILENAME_DATE = await goCrawlering(URL_DOMAIN+URL_BRD_LIST, getFileName);
+  const FILENAME_DATE = await convert.goCrawlering(URL_DOMAIN+URL_BRD_LIST, getFileName);
 
   //# 1 글의 경로 
-  const URL_CONTENTS = await goCrawlering(URL_DOMAIN+URL_BRD_LIST, geContentstUrl);
+  const URL_CONTENTS = await convert.goCrawlering(URL_DOMAIN+URL_BRD_LIST, geContentstUrl);
 
   //# 2 엑셀 파일 경로
-  const URL_FILE = await goCrawlering(URL_DOMAIN+URL_CONTENTS, getExcelFileUrl);
+  const URL_FILE = await convert.goCrawlering(URL_DOMAIN+URL_CONTENTS, getExcelFileUrl);
 
   //# 3 : 엑셀 파일 다운로드
   const FILENAME_XLS = await getExcelFile(URL_DOMAIN+URL_FILE, FILENAME_DATE);
