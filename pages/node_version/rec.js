@@ -1,3 +1,5 @@
+const { isContext } = require('vm');
+
 (async()=>{
 
   //# LIBRARY
@@ -27,7 +29,7 @@
   }
 
   function getExcelFileUrl($){
-    const linkStr= $("#area_sub_content .bbsTableView .file-list li:nth-child(3) a").attr("href")
+    const linkStr= $("#area_sub_content .bbsTableView .file-list li img[src*='ico_xls']").next().attr("href")
     return linkStr.slice(8, linkStr.length);
   }
 
